@@ -1104,18 +1104,9 @@ Octstr *conn_read_fixed(Connection *conn, long length)
     /* See if the data is already available.  If not, try a read(),
      * then see if we have enough data after that.  If not, give up. */
     lock_in(conn);
-    long read_len = unlocked_inbuf_len(conn);
-    if (read_len < length) {
-
-        do {
-            unlocked_read(conn);
-            long new_len = unlocked_inbuf_len(conn);
-            if(new_len <= read_len)
-                break;
-            read_len = new_len;
-        } while (read_len < length);
-
-        if (read_len < length) {
+    if (unlocked_inbuf_len(conn) < length) {
+        unlocked_read(conn);
+        if (unlocked_inbuf_len(conn) < length) {
             unlock_in(conn);
             return NULL;
         }

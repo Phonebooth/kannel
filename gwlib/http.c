@@ -2163,8 +2163,9 @@ static void receive_request(Connection *conn, void *data)
 	    	client->state = request_is_being_handled;
 		conn_unregister(conn);
 		port_put_request(client);
+        return;
 	    }
-	    return;
+	    break;
 
 	case sending_reply:
             /* Implicit conn_unregister() and _destroy */
